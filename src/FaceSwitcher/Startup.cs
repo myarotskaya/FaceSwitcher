@@ -1,8 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FaceSwitcher.Data.Blob;
+using FaceSwitcher.Detector;
+using FaceSwitcher.Processor;
+using FaceSwitcher.Services;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.ProjectOxford.Face;
 
 namespace FaceSwitcher
 {
@@ -23,6 +29,13 @@ namespace FaceSwitcher
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services
+                .AddTransient<IFaceSwitcher, Services.FaceSwitcher>()
+                .AddTransient<IFaceDetector, FaceDetector>(x => new FaceDetector(new FaceServiceClient("[apiKey]")))
+                .AddTransient<IImageProcessor, ImageProcessor>()
+                .AddTransient<IHttpSource, HttpSource>()
+                .AddTransient<IBlobRepository, BlobRepository>(x => new BlobRepository("[connectionString]", "[container]", "[cdnUrl]"));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
