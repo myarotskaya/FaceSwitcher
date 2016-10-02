@@ -1,0 +1,20 @@
+os: Visual Studio 2015
+
+environment:
+  matrix:
+    - DOTNET_CLI_VERSION: Latest
+
+cache:
+  - packages -> **\packages.config
+  - install.lock -> install.ps1
+  - .dotnet -> install.ps1
+  - .fake
+
+install:
+  - ps: .\install.ps1
+
+build_script:
+  - ps: .\build.ps1
+
+test: off
+version: 0.0.1.{build}

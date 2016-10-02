@@ -1,0 +1,104 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "siteName": {
+            "type": "string"
+        },
+        "repoUrl": {
+            "type": "string"
+        },
+        "branch": {
+            "type": "string",
+            "defaultValue": "master"
+        },
+        "faceApiKey": {
+            "type": "string",
+            "defaultValue": "74be48f83ed74524a8efb6e5eaece7f2"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "sku": {
+                "name": "F1",
+                "tier": "Free",
+                "size": "F1",
+                "family": "F",
+                "capacity": 0
+            },
+            "name": "[parameters('siteName')]",
+            "apiVersion": "2015-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "name": "[parameters('siteName')]",
+                "numberOfWorkers": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "name": "[parameters('siteName')]",
+            "apiVersion": "2015-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('siteName'))]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('siteName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('siteName'))]"
+            ],
+            "resources": [
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "web",
+                    "type": "sourcecontrols",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', parameters('siteName'))]"
+                    ],
+                    "properties": {
+                        "RepoUrl": "[parameters('repoUrl')]",
+                        "branch": "[parameters('branch')]",
+                        "IsManualIntegration": true
+                    }
+                },
+                {
+                    "apiVersion": "2015-08-01",
+                    "type": "config",
+                    "name": "appsettings",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', parameters('siteName'))]"
+                    ],
+                    "properties": {
+                        "BlobContainerName": "images",
+                        "BlobConnectionString": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('siteName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "microsoft.insights/components",
+            "kind": "web",
+            "name": "[parameters('siteName')]",
+            "apiVersion": "2014-04-01",
+            "location": "Central US",
+            "properties": {
+                "ApplicationId": "[parameters('siteName')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "BlobStorage",
+            "name": "[parameters('siteName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "accessTier": "Hot"
+            }
+        }
+    ]
+}
