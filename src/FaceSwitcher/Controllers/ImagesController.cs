@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FaceSwitcher.Controllers
 {
+    [Route("api/[controller]")]
     public class ImagesController : Controller
     {
         private readonly IFaceSwitcher _faceSwitcher;
@@ -20,7 +21,8 @@ namespace FaceSwitcher.Controllers
             _faceSwitcher = faceSwitcher;
         }
 
-        public async Task<IActionResult> Index(CancellationToken cancellationToken)
+        [Route("")]
+        public async Task<IActionResult> Process(CancellationToken cancellationToken)
         {
             var file = Request.Form.Files.FirstOrDefault();
             if (file == null)
