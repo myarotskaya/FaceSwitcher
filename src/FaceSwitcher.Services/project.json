@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "FaceSwitcher.Data.Blob": "1.0.0-*",
+    "FaceSwitcher.Detector": "1.0.0-*",
+    "FaceSwitcher.Processor": "1.0.0-*",
+    "JetBrains.Annotations": "10.1.5",
+    "NETStandard.Library": "1.6.0"
+  },
+
+  "frameworks": {
+    "net461": {
+      "imports": "dnxcore50"
+    }
+  }
+}

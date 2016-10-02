@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -18,16 +19,29 @@ namespace FaceSwitcher.Detector
 
         public FaceDetector([NotNull] IFaceServiceClient faceClient)
         {
+            if (faceClient == null)
+            {
+                throw new ArgumentNullException(nameof(faceClient));
+            }
+
             _faceClient = faceClient;
         }
 
         public async Task<IEnumerable<FaceModel>> DetectAsync(Stream stream, CancellationToken cancellationToken)
         {
-            var faces = await _faceClient.DetectAsync(stream);
-            var faceRectangles = faces.Select(face => face.FaceRectangle);
+            stream.Seek(0, SeekOrigin.Begin);
 
-            return faceRectangles
-                .Select(x => new FaceModel(x.Top, x.Height, x.Left, x.Width));
+            using (var detectStream = new MemoryStream())
+            {
+                stream.CopyTo(detectStream);
+                detectStream.Seek(0, SeekOrigin.Begin);
+
+                var faces = await _faceClient.DetectAsync(detectStream);
+
+                return faces
+                    .Select(face => face.FaceRectangle)
+                    .Select(x => new FaceModel(x.Top, x.Left, x.Width, x.Height));
+            }
         }
     }
 }
