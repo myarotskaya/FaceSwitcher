@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "BandLab Technologies",
+      "xmlHeader": false,
+      "documentInterfaces": false,
+      "documentExposedElements": false,
+      "documentInternalElements": false,
+      "documentPrivateElements": false,
+      "documentPrivateFields": false,
+      "fileNamingConvention": "stylecop"
+    },
+    "namingRules": {
+      "allowCommonHungarianPrefixes": true
+    },
+    "layoutRules": {
+      "newlineAtEndOfFile": "require"
+    },
+    "maintainabilityRules": {
+    },
+    "orderingRules": {
+    },
+    "readabilityRules": {
+    },
+    "spacingRules": {
+    }
+  }
+}

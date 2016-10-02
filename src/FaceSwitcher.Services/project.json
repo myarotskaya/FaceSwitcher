@@ -6,12 +6,20 @@
     "FaceSwitcher.Detector": "1.0.0-*",
     "FaceSwitcher.Processor": "1.0.0-*",
     "JetBrains.Annotations": "10.1.5",
-    "NETStandard.Library": "1.6.0"
+    "NETStandard.Library": "1.6.0",
+    "StyleCop.Analyzers": {
+      "version": "1.0.0",
+      "type": "build"
+    }
   },
 
   "frameworks": {
     "net461": {
       "imports": "dnxcore50"
     }
+  },
+
+  "buildOptions": {
+    "additionalArguments": [ "../../stylecop.json" ]
   }
 }

@@ -3,6 +3,7 @@
 
   "dependencies": {
     "NETStandard.Library": "1.6.0",
+    "StyleCop.Analyzers": "1.0.0",
     "WindowsAzure.Storage": "7.2.1"
   },
 
@@ -10,5 +11,9 @@
     "net461": {
       "imports": "dnxcore50"
     }
+  },
+
+  "buildOptions": {
+    "additionalArguments": [ "../../stylecop.json" ]
   }
 }
