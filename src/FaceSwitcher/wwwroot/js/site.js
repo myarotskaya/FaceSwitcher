@@ -42,7 +42,7 @@ function setImageSource(source) {
 }
 
 function resizeImage(img) {
-    var newSize = scaleSize(1000, 800, img.width, img.height);
+    var newSize = scaleSize(500, 500, img.width, img.height);
     $("#uploadedImage").attr("width", newSize[0]);
     $("#uploadedImage").attr("height", newSize[1]);
 }

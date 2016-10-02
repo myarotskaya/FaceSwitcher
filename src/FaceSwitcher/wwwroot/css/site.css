@@ -1,18 +1,12 @@
 ﻿body {
     padding-top: 50px;
-    padding-bottom: 20px;
 }
 
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+input {
+    display: none;
 }
 
-.btn {
-    margin: 15px 0 15px 0;
-}
-
-.img {
-    min-width: 500px;
-    min-height: 500px;
+.img-panel {
+    max-width: 500px;
+    max-height: 500px;
 }
