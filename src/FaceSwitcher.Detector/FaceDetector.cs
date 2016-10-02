@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -18,6 +19,11 @@ namespace FaceSwitcher.Detector
 
         public FaceDetector([NotNull] IFaceServiceClient faceClient)
         {
+            if (faceClient == null)
+            {
+                throw new ArgumentNullException(nameof(faceClient));
+            }
+
             _faceClient = faceClient;
         }
 

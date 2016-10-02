@@ -24,6 +24,19 @@ namespace FaceSwitcher.Services
             [NotNull] IImageProcessor imageProcessor,
             [NotNull] IBlobRepository repository)
         {
+            if (faceDetector == null)
+            {
+                throw new ArgumentNullException(nameof(faceDetector));
+            }
+            if (imageProcessor == null)
+            {
+                throw new ArgumentNullException(nameof(imageProcessor));
+            }
+            if (repository == null)
+            {
+                throw new ArgumentNullException(nameof(repository));
+            }
+
             _faceDetector = faceDetector;
             _imageProcessor = imageProcessor;
             _repository = repository;
@@ -31,6 +44,11 @@ namespace FaceSwitcher.Services
 
         public async Task<string> ProcessAsync(Stream inputStream, CancellationToken cancellationToken)
         {
+            if (inputStream == null)
+            {
+                throw new ArgumentException("Incorrect input stream.");
+            }
+
             var faces = await _faceDetector.DetectAsync(inputStream, cancellationToken);
 
             using (var outputStream = new MemoryStream())

@@ -17,7 +17,7 @@ namespace FaceSwitcher.Data.Blob
         {
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new ArgumentException(nameof(connectionString));
+                throw new ArgumentNullException(nameof(connectionString));
             }
 
             _cloudBlobContainer = CloudStorageAccount

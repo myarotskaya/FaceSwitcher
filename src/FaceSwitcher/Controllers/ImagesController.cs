@@ -21,19 +21,26 @@ namespace FaceSwitcher.Controllers
             _faceSwitcher = faceSwitcher;
         }
 
-        [Route("")]
+        [HttpPost, Route("")]
         public async Task<IActionResult> Process(CancellationToken cancellationToken)
         {
             var file = Request.Form.Files.FirstOrDefault();
             if (file == null)
             {
-                throw new ArgumentException();
+                return BadRequest("The request content is empty.");
             }
 
             string resultUrl;
             using (var stream = file.OpenReadStream())
             {
-                resultUrl = await _faceSwitcher.ProcessAsync(stream, cancellationToken);
+                try
+                {
+                    resultUrl = await _faceSwitcher.ProcessAsync(stream, cancellationToken);
+                }
+                catch (ArgumentException e)
+                {
+                    return BadRequest(e.Message);
+                }
             }
 
             return Created(string.Empty, resultUrl);
