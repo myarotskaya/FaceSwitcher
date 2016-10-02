@@ -1,3 +1,15 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+
+<div id="imageDiv" class="row">
+    <label id ="upload" class="btn btn-success btn-file">
+        Upload file <input id ="imageFile" type="file" style="display: none;">
+    </label>
+
+    <button id="process" type="button" class="btn btn-success">Process</button>
+
+    <div class="panel panel-success" style="position: relative; width: 1000px; height: 0; padding-top: 800px;">
+        <img id="uploadedImage" style="position: absolute; top: 0; left: 0"/>
+    </div>
+</div>
