@@ -6,7 +6,8 @@
             "type": "string"
         },
         "repoUrl": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "https://github.com/myarotskaya/FaceSwitcher"
         },
         "branch": {
             "type": "string",
@@ -71,7 +72,7 @@
                     ],
                     "properties": {
                         "BlobContainerName": "images",
-                        "BlobConnectionString": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('siteName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                        "BlobConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('siteName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('siteName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
                     }
                 }
             ]

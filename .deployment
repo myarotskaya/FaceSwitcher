@@ -1,2 +1,2 @@
-+[config]
-+project = src/FaceSwitcher/project.json
+[config]
+project = src/FaceSwitcher
