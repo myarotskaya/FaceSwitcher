@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,10 +11,9 @@ namespace FaceSwitcher.Data.Blob
 {
     public class BlobRepository : IBlobRepository
     {
-        private readonly string _cdnUrl;
         private readonly CloudBlobContainer _cloudBlobContainer;
 
-        public BlobRepository(string connectionString, string containerName, string cdnUrl)
+        public BlobRepository(string connectionString, string containerName)
         {
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -24,17 +24,15 @@ namespace FaceSwitcher.Data.Blob
                 .Parse(connectionString)
                 .CreateCloudBlobClient()
                 .GetContainerReference(containerName);
-
-            _cdnUrl = cdnUrl;
         }
 
-        public async Task<Stream> GetBlobStreamAsync(string name, CancellationToken cancellationToken)
+        public async Task<Stream> GetStreamAsync(string name, CancellationToken cancellationToken)
         {
             var block = _cloudBlobContainer.GetBlockBlobReference(name);
             var isExists = await block.ExistsAsync(cancellationToken);
             if (!isExists)
             {
-                return null;
+                throw new KeyNotFoundException();
             }
 
             return await block.OpenReadAsync(cancellationToken);
@@ -52,9 +50,7 @@ namespace FaceSwitcher.Data.Blob
 
             await block.UploadFromStreamAsync(stream, cancellationToken);
 
-            return !string.IsNullOrEmpty(_cdnUrl)
-                ? $"{_cdnUrl}/{block.Container.Name}/{block.Name}"
-                : block.Uri.ToString();
+            return block.Uri.ToString();
         }
     }
 }

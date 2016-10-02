@@ -6,7 +6,7 @@ namespace FaceSwitcher.Data.Blob
 {
     public interface IBlobRepository
     {
-        Task<Stream> GetBlobStreamAsync(string name, CancellationToken cancellationToken);
+        Task<Stream> GetStreamAsync(string name, CancellationToken cancellationToken);
         Task<string> UploadAsync(Stream stream, string name, CancellationToken cancellationToken);
     }
 }

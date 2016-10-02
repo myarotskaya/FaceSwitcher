@@ -31,11 +31,10 @@ namespace FaceSwitcher
             services.AddMvc();
 
             services
-                .AddTransient<IFaceSwitcher, Services.FaceSwitcher>()
-                .AddTransient<IFaceDetector, FaceDetector>(x => new FaceDetector(new FaceServiceClient("[apiKey]")))
-                .AddTransient<IImageProcessor, ImageProcessor>()
-                .AddTransient<IHttpSource, HttpSource>()
-                .AddTransient<IBlobRepository, BlobRepository>(x => new BlobRepository("[connectionString]", "[container]", "[cdnUrl]"));
+                .AddSingleton<IFaceSwitcher, Services.FaceSwitcher>()
+                .AddSingleton<IFaceDetector, FaceDetector>(x => new FaceDetector(new FaceServiceClient(Configuration["FaceApiKey"])))
+                .AddSingleton<IImageProcessor, ImageProcessor>()
+                .AddSingleton<IBlobRepository, BlobRepository>(x => new BlobRepository(Configuration["BlobConnectionString"], Configuration["BlobContainerName"]));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

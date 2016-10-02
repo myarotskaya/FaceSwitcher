@@ -35,7 +35,7 @@ namespace FaceSwitcher.Services
 
             using (var outputStream = new MemoryStream())
             {
-                var overlayStream = await _repository.GetBlobStreamAsync(CatFileName, cancellationToken);
+                var overlayStream = await _repository.GetStreamAsync(CatFileName, cancellationToken);
                 _imageProcessor.Overlay(inputStream, overlayStream, outputStream, faces);
 
                 return await _repository.UploadAsync(outputStream, Guid.NewGuid() + ".jpg", cancellationToken);

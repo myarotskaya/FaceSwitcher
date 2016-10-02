@@ -19,7 +19,7 @@ namespace FaceSwitcher.Processor.Tests
             using (var actualResult = new MemoryStream())
             using (var expectedResult = File.Open("black_and_white.bmp", FileMode.Open))
             {
-                processor.Overlay(stream1, stream2, actualResult, new FaceModel(25, 25, 50, 50));
+                processor.Overlay(stream1, stream2, actualResult, new [] { new FaceModel(25, 25, 50, 50) });
 
                 Assert.True(expectedResult.IsEquals(actualResult));
             }

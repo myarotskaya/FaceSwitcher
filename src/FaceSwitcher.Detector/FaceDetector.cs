@@ -31,9 +31,9 @@ namespace FaceSwitcher.Detector
                 detectStream.Seek(0, SeekOrigin.Begin);
 
                 var faces = await _faceClient.DetectAsync(detectStream);
-                var faceRectangles = faces.Select(face => face.FaceRectangle);
 
-                return faceRectangles
+                return faces
+                    .Select(face => face.FaceRectangle)
                     .Select(x => new FaceModel(x.Top, x.Left, x.Width, x.Height));
             }
         }
