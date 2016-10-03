@@ -19,15 +19,15 @@ ASP.NET Core + Microsoft Cognitive Services
 
 # Build
 
-​```
+```bash
 build.cmd
-​```
+```
 
 # Run
 
-​```
+```bash
 run.cmd
-​```
+```
 
 # Deploy
 
