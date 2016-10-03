@@ -3,6 +3,22 @@
 }
 
 .img-panel {
-    max-width: 500px;
-    max-height: 500px;
+    max-width: 800px;
+    max-height: 800px;
+}
+
+.droppable {
+    width: 800px;
+    height: 500px;
+    background-color: white;
+    outline: 2px dashed lightgray;
+    outline-offset: -10px;
+    padding: 240px 0;
+    text-align: center;
+    font-style: italic;
+    color: gray;
+}
+
+.droppable.dragover {
+    background: lightgray;
 }

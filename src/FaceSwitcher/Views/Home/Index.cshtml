@@ -4,13 +4,18 @@
 <div class="row">
     <div class="panel panel-default">
         <div class="panel-body text-center">
-            <label id="upload" class="btn btn-success btn-file">
-                Upload<input id="imageFile" type="file" style="display: none;">
+            <label id="upload" class="btn btn-info btn-file">
+                Upload photo<input id="imageInput" type="file" style="display: none;">
             </label>
-            <button id="process" type="button" class="btn btn-success">Switch</button>
+            <button id="switch" type="button" class="btn btn-success" disabled>Switch faces</button>
         </div>
     </div>
 </div>
-<div class="row">
+
+<div id="imageFile" class="row">
     <img id="uploadedImage" class="img-responsive img-thumbnail img-panel center-block" />
+</div>
+
+<div id="imageDrop" class="droppable center-block">
+    Drag your photo here or click to upload.
 </div>
