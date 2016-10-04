@@ -11,7 +11,7 @@ Build Status
 
 # What
 
-FaceSwitcher is an application that recognazes human faces on a photo and changes them to faces of cats.
+FaceSwitcher is an application that recognizes human faces on a photo and changes them to faces of cats.
 
 # How
 
