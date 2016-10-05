@@ -5,9 +5,10 @@
     <div class="panel panel-default">
         <div class="panel-body text-center">
             <label id="upload" class="btn btn-info btn-file">
-                Upload photo<input id="imageInput" type="file" style="display: none;">
+                Upload photo<input id="imageInput" data-bind="event: {change: $root.create}" type="file" style="display: none;">
             </label>
-            <button id="switch" type="button" class="btn btn-success" disabled>Switch faces</button>
+            <button id="switch" data-bind="click: get, enable: isSwitchEnable" type="button" class="btn btn-success">Switch faces</button>
+            <label class="loader" data-bind="visible: isLoadingInProgress"></label>
         </div>
     </div>
 </div>

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 
 using FaceSwitcher.Models;
 using FaceSwitcher.Processor.Extensions;
+
+using ImageFormat = System.Drawing.Imaging.ImageFormat;
 
 namespace FaceSwitcher.Processor
 {

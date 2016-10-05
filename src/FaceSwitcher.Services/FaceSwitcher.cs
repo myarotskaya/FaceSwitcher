@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 using FaceSwitcher.Data.Blob;
 using FaceSwitcher.Detector;
+using FaceSwitcher.Models;
 using FaceSwitcher.Processor;
 
 using JetBrains.Annotations;
@@ -42,21 +44,36 @@ namespace FaceSwitcher.Services
             _repository = repository;
         }
 
-        public async Task<string> ProcessAsync(Stream inputStream, CancellationToken cancellationToken)
+        public async Task<string> GetAsync(Guid id, CancellationToken cancellationToken)
         {
-            if (inputStream == null)
+            return await _repository.GetUrlAsync(id.ToString(), cancellationToken);
+        }
+
+        public async Task<Guid> CreateAsync(Stream inputStream, string contentType, CancellationToken cancellationToken)
+        {
+            if (inputStream == null || !inputStream.CanRead)
             {
                 throw new ArgumentException("Incorrect input stream.");
             }
 
-            var faces = await _faceDetector.DetectAsync(inputStream, cancellationToken);
+            var model = new ImageModel(contentType);
 
             using (var outputStream = new MemoryStream())
             {
-                var overlayStream = await _repository.GetStreamAsync(CatFileName, cancellationToken);
-                _imageProcessor.Overlay(inputStream, overlayStream, outputStream, faces);
+                var faces = await _faceDetector.DetectAsync(inputStream, cancellationToken);
+                await OverlayAsync(inputStream, outputStream, faces, cancellationToken);
+                await _repository.UploadAsync(outputStream, model.FileName, contentType, cancellationToken);
+            }
 
-                return await _repository.UploadAsync(outputStream, Guid.NewGuid() + ".jpg", cancellationToken);
+            return model.Id;
+        }
+
+        private async Task OverlayAsync(Stream inputStream, Stream outputStream, IEnumerable<FaceModel> faces, CancellationToken cancellationToken)
+        {
+            using (var overlayStream = new MemoryStream())
+            {
+                await _repository.DownloadAsync(overlayStream, CatFileName, cancellationToken);
+                _imageProcessor.Overlay(inputStream, overlayStream, outputStream, faces);
             }
         }
     }
