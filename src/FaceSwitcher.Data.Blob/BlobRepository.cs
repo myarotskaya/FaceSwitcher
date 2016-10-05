@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,31 +27,47 @@ namespace FaceSwitcher.Data.Blob
                 .GetContainerReference(containerName);
         }
 
-        public async Task<Stream> GetStreamAsync(string name, CancellationToken cancellationToken)
+        public async Task<string> GetUrlAsync(string name, CancellationToken cancellationToken)
+        {
+            var block = (CloudBlockBlob)_cloudBlobContainer
+                .ListBlobs(name)
+                .FirstOrDefault();
+
+            var isExists = block != null && await block.ExistsAsync(cancellationToken);
+            if (!isExists)
+            {
+                throw new KeyNotFoundException("Blob is not found.");
+            }
+
+            return block.Uri.ToString();
+        }
+
+        public async Task DownloadAsync(Stream stream, string name, CancellationToken cancellationToken)
         {
             var block = _cloudBlobContainer.GetBlockBlobReference(name);
+
             var isExists = await block.ExistsAsync(cancellationToken);
             if (!isExists)
             {
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("Blob is not found.");
             }
 
-            return await block.OpenReadAsync(cancellationToken);
+            await block.DownloadToStreamAsync(stream, cancellationToken);
         }
 
-        public async Task<string> UploadAsync(Stream stream, string name, CancellationToken cancellationToken)
+        public async Task UploadAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
-            stream.Seek(0, SeekOrigin.Begin);
-            if (stream.Length == 0)
+            if (stream.Length == 0 || !stream.CanSeek)
             {
-                throw new ArgumentException(nameof(stream));
+                throw new ArgumentException("Incorrect stream.");
             }
 
+            stream.Seek(0, SeekOrigin.Begin);
             var block = _cloudBlobContainer.GetBlockBlobReference(name);
 
-            await block.UploadFromStreamAsync(stream, cancellationToken);
+            block.Properties.ContentType = contentType;
 
-            return block.Uri.ToString();
+            await block.UploadFromStreamAsync(stream, cancellationToken);
         }
     }
 }
