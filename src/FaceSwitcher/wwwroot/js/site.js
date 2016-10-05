@@ -1,51 +1,65 @@
-﻿$(function () {
-    var dropElement = document.querySelector(".droppable");
-    makeDroppable(dropElement, uploadImage);
+﻿var ImageViewModel = function () {
+    var self = this;
 
-    var uploadElement = document.getElementById("imageInput");
-    makeChanging(uploadElement, uploadImage);
-});
+    self.isSwitchEnable = ko.observable(false);
+    self.isLoadingInProgress = ko.observable(false);
 
-$("#switch").click(function () {
-    var blob = base64toBlob(localStorage.currentImage);
-    var formData = new FormData();
+    self.create = function (data, e) {
+        self.isLoadingInProgress(true);
 
-    formData.append("file", blob);
+        var file = e.target.files[0];
 
-    $.ajax({
-        url: "api/images",
-        type: "POST",
-        processData: false,
-        contentType: false,
-        data: formData,
-        async: true,
-        success: function (response) {
-            setImageSource(response);
-            $("#switch").attr("disabled", true);
-        },
-        error: function (errorMessage) {
-            console.log(errorMessage);
-        }
-    });
-});
-
-function uploadImage(e) {
-    var files = e.dataTransfer
-        ? e.dataTransfer.files
-        : e.target.files;
-
-    $.each(files, function (index, file) {
         var reader = new FileReader();
         reader.onload = function () {
             setImageSource(reader.result);
-            localStorage.currentImage = reader.result;
+
+            var formData = new FormData();
+            formData.append("file", file);
+
+            $.ajax({
+                url: "api/images",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                async: true,
+                success: function (response) {
+                    self.id = response.id;
+                    self.isSwitchEnable(true);
+                    self.isLoadingInProgress(false);
+                },
+                error: function (errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
         };
 
         reader.readAsDataURL(file);
-    });
+    };
 
-    $("#switch").attr("disabled", false);
+    self.get = function () {
+        $.ajax({
+            url: "api/images/" + self.id,
+            type: "GET",
+            async: true,
+            success: function (response) {
+                setImageSource(response.url);
+                self.isSwitchEnable(false);
+            },
+            error: function (errorMessage) {
+                console.log(errorMessage);
+            }
+        });
+    }
 }
+
+$(function () {
+    var viewModel = new ImageViewModel();
+    ko.applyBindings(viewModel);
+
+    var dropElement = document.querySelector(".droppable");
+    makeDroppable(dropElement, viewModel.create);
+});
 
 function makeDroppable(element, callback) {
     var input = document.createElement("input");
@@ -90,18 +104,4 @@ function setImageSource(source) {
 
     $("#uploadedImage").attr("src", source);
     $("#imageDrop").hide();
-}
-
-function base64toBlob(data) {
-    var byteString = atob(data.split(",")[1]);
-    var contentType = data.substring(data.lastIndexOf(":") + 1, data.lastIndexOf(";"));
-
-    var arrayBuffer = new ArrayBuffer(byteString.length);
-    var intArray = new Uint8Array(arrayBuffer);
-
-    for (var i = 0; i < byteString.length; i++) {
-        intArray[i] = byteString.charCodeAt(i);
-    }
-
-    return new Blob([arrayBuffer], { type: contentType });
 }

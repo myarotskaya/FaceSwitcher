@@ -44,7 +44,7 @@ namespace FaceSwitcher.Services
             _repository = repository;
         }
 
-        public async Task<string> GetAsync(Guid id, ImageFormat format, CancellationToken cancellationToken)
+        public async Task<string> GetAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _repository.GetUrlAsync(id.ToString(), cancellationToken);
         }

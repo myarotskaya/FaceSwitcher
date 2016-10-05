@@ -23,13 +23,13 @@ namespace FaceSwitcher.Controllers
             _faceSwitcher = faceSwitcher;
         }
 
-        [HttpGet, Route("{id: guid}", Name = "GetImageById")]
-        public async Task<IActionResult> Get(Guid id, [FromQuery] ImageFormat format, CancellationToken cancellationToken)
+        [HttpGet, Route("{id}", Name = "GetImageById")]
+        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
         {
             string url;
             try
             {
-                url = await _faceSwitcher.GetAsync(id, format, cancellationToken);
+                url = await _faceSwitcher.GetAsync(id, cancellationToken);
             }
             catch (KeyNotFoundException e)
             {
@@ -65,7 +65,7 @@ namespace FaceSwitcher.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetImageById", new { id });
+            return CreatedAtRoute("GetImageById", new { id }, new { id });
         }
     }
 }
