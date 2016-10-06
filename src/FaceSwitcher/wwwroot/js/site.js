@@ -4,11 +4,33 @@
     self.isSwitchEnable = ko.observable(false);
     self.isLoadingInProgress = ko.observable(false);
 
-    self.create = function (data, e) {
+    var dropElement = document.querySelector(".droppable");
+
+    self.dragover = function () {
+        dropElement.classList.add("dragover");
+    }
+
+    self.dragleave = function () {
+        dropElement.classList.remove("dragover");
+    }
+
+    self.drop = function (data, e) {
+        dropElement.classList.remove("dragover");
+        self.create(data, e.originalEvent);
+    }
+
+    self.inputClick = function () {
+        $("#imageInput").click();
+    }
+
+    self.uploadImage = function (data, e) {
         self.isLoadingInProgress(true);
 
-        var file = e.target.files[0];
+        var files = e.dataTransfer
+            ? e.dataTransfer.files
+            : e.target.files;
 
+        var file = files[0];
         var reader = new FileReader();
         reader.onload = function () {
             setImageSource(reader.result);
@@ -16,87 +38,29 @@
             var formData = new FormData();
             formData.append("file", file);
 
-            $.ajax({
-                url: "api/images",
-                type: "POST",
-                processData: false,
-                contentType: false,
-                data: formData,
-                async: true,
-                success: function (response) {
-                    self.id = response.id;
-                    self.isSwitchEnable(true);
-                    self.isLoadingInProgress(false);
-                },
-                error: function (errorMessage) {
-                    console.log(errorMessage);
-                }
+            postImage(formData, function (response) {
+                self.id = response.id;
+                self.isSwitchEnable(true);
+                self.isLoadingInProgress(false);
             });
         };
 
         reader.readAsDataURL(file);
     };
 
-    self.get = function () {
-        $.ajax({
-            url: "api/images/" + self.id,
-            type: "GET",
-            async: true,
-            success: function (response) {
+    self.performSwitch = function () {
+        getUrl(self.id,
+            function (response) {
                 setImageSource(response.url);
                 self.isSwitchEnable(false);
-            },
-            error: function (errorMessage) {
-                console.log(errorMessage);
-            }
-        });
-    }
+            });
+    };
 }
 
 $(function () {
     var viewModel = new ImageViewModel();
     ko.applyBindings(viewModel);
-
-    var dropElement = document.querySelector(".droppable");
-    makeDroppable(dropElement, viewModel.create);
 });
-
-function makeDroppable(element, callback) {
-    var input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.style.display = "none";
-
-    input.addEventListener("change", callback);
-    element.appendChild(input);
-
-    element.addEventListener("dragover", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        element.classList.add("dragover");
-    });
-
-    element.addEventListener("dragleave", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        element.classList.remove("dragover");
-    });
-
-    element.addEventListener("drop", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        element.classList.remove("dragover");
-        callback(e);
-    });
-
-    element.addEventListener("click", function () {
-        input.value = null;
-        input.click();
-    });
-}
-
-function makeChanging(element, callback) {
-    element.addEventListener("change", callback);
-}
 
 function setImageSource(source) {
     var img = new Image();
@@ -104,4 +68,31 @@ function setImageSource(source) {
 
     $("#uploadedImage").attr("src", source);
     $("#imageDrop").hide();
+}
+
+function getUrl(id, successHandler) {
+    $.ajax({
+        url: "api/images/" + id,
+        type: "GET",
+        async: true,
+        success: successHandler,
+        error: function (errorMessage) {
+            console.log(errorMessage);
+        }
+    });
+}
+
+function postImage(data, successHandler) {
+    $.ajax({
+        url: "api/images",
+        type: "POST",
+        processData: false,
+        contentType: false,
+        data: data,
+        async: true,
+        success: successHandler,
+        error: function (errorMessage) {
+            console.log(errorMessage);
+        }
+    });
 }

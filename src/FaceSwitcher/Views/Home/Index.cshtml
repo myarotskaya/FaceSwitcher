@@ -5,18 +5,17 @@
     <div class="panel panel-default">
         <div class="panel-body text-center">
             <label id="upload" class="btn btn-info btn-file">
-                Upload photo<input id="imageInput" data-bind="event: {change: $root.create}" type="file" style="display: none;">
+                Upload photo<input data-bind="event: {change: uploadImage}" type="file" style="display: none;">
             </label>
-            <button id="switch" data-bind="click: get, enable: isSwitchEnable" type="button" class="btn btn-success">Switch faces</button>
+            <button data-bind="click: performSwitch, enable: isSwitchEnable" type="button" class="btn btn-success">Switch faces</button>
             <label class="loader" data-bind="visible: isLoadingInProgress"></label>
         </div>
     </div>
 </div>
-
 <div id="imageFile" class="row">
     <img id="uploadedImage" class="img-responsive img-thumbnail img-panel center-block" />
 </div>
-
-<div id="imageDrop" class="droppable center-block">
+<input id="imageInput" data-bind="event: {change: uploadImage}" type="file" style="display: none;">
+<div id="imageDrop" data-bind="event: {dragover: dragover, dragleave: dragleave, drop: drop, click: inputClick}" class="droppable center-block">
     Drag your photo here or click to upload.
 </div>
